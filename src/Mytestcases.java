@@ -32,11 +32,16 @@ public class Mytestcases {
 
 	JavascriptExecutor js = (JavascriptExecutor) driver;
 
+	// this is related to test # 11
+	Actions action = new Actions(driver);
+
 	@BeforeTest
 	public void mySetup() {
 
 		driver.manage().window().maximize();
 		driver.get(WebSite);
+
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
 	}
 
 	@Test(priority = 1, description = "Radio button", invocationCount = 1, enabled = false)
@@ -108,13 +113,13 @@ public class Mytestcases {
 		WebElement SelectElement = driver.findElement(By.id("dropdown-class-example"));
 		Select sel = new Select(SelectElement);
 
-		 sel.selectByIndex(3);
+		sel.selectByIndex(3);
 		// sel.selectByValue("option2");
 		// sel.selectByVisibleText("API");
 
 	}
 
-	@Test(priority = 4, description = "check box example", enabled = true)
+	@Test(priority = 4, description = "check box example", enabled = false)
 	public void Checkbox_Example() throws InterruptedException {
 		List<WebElement> CheckBoxes = driver.findElements(By.xpath("//input[@type='checkbox']"));
 		int randomIndex = rand.nextInt(CheckBoxes.size());
@@ -130,15 +135,12 @@ public class Mytestcases {
 		for (int i = 0; i < CheckBoxes.size(); i++) {
 			CheckBoxes.get(i).click();
 			boolean ActaualResult = CheckBoxes.get(i).isSelected();
-			boolean expectedResult = true ; 
-			
-			Assert.assertEquals(ActaualResult, expectedResult); 
-			
-		}
-	
+			boolean expectedResult = true;
 
-		
-		
+			Assert.assertEquals(ActaualResult, expectedResult);
+
+		}
+
 	}
 
 	@Test(priority = 5, description = "this is to move from window to another one", enabled = false)
@@ -247,7 +249,99 @@ public class Mytestcases {
 		myAssertion.assertAll();
 	}
 
-	@Test(priority = 10, enabled = false)
+	@Test(priority = 10, description = "check The Both Buttons disable , enable", enabled = false)
+	public void Enabled_Disabled_Example() throws InterruptedException {
+		WebElement DisabledButton = driver.findElement(By.id("disabled-button"));
+		WebElement EnabledButton = driver.findElement(By.id("enabled-button"));
+
+		DisabledButton.click();
+
+		WebElement enabled_example_input = driver.findElement(By.id("enabled-example-input"));
+
+		boolean ActualResult = enabled_example_input.isEnabled();
+
+		boolean ExpectedResult = false;
+
+		Assert.assertEquals(ActualResult, ExpectedResult);
+
+		Thread.sleep(1000);
+
+		EnabledButton.click();
+		boolean ActualResult2 = enabled_example_input.isEnabled();
+		enabled_example_input.sendKeys("123");
+		boolean ExpectedResult2 = true;
+		Assert.assertEquals(ActualResult2, ExpectedResult2);
+
+	}
+
+	@Test(priority = 11, description = "check the hover to certain element", enabled = false)
+	public void Mouse_Hover_Example() throws InterruptedException {
+
+		js.executeScript("window.scrollTo(0,1800)");
+		Thread.sleep(2000);
+
+		WebElement MouseHoverElement = driver.findElement(By.id("mousehover"));
+
+		action.moveToElement(MouseHoverElement).perform();
+		;
+
+		Thread.sleep(1000);
+		// driver.findElement(By.linkText("Top")).click();
+		driver.findElement(By.partialLinkText("Relo")).click();
+
+	}
+
+	@Test(priority = 12, description = "open calendar in a new tab", enabled = false)
+	public void Calendar_Example() throws InterruptedException {
+		// this is not the eaistes way
+		js.executeScript("window.scrollTo(0,1900)");
+
+		// WebElement Calendar2 = driver.findElement(By.linkText("Booking Calendar"));
+		WebElement Calendar2 = driver.findElement(By.partialLinkText("Booking"));
+
+		Calendar2.click();
+		Thread.sleep(1000);
+
+		List<String> windowsHandels = new ArrayList<String>(driver.getWindowHandles());
+		driver.switchTo().window(windowsHandels.get(1));
+
+		System.out.println(driver.getTitle());
+
+		int totalAvailbleDates = driver.findElements(By.className("date_available")).size();
+
+		driver.findElements(By.className("date_available")).get(0).click();
+		driver.findElements(By.className("date_available")).get(totalAvailbleDates - 1).click();
+
+	}
+
+	@Test(priority = 13, description = "switch to frame inside the main page", enabled = false)
+	public void iFrame_Example() {
+
+		WebElement TheFrame = driver.findElement(By.id("courses-iframe"));
+		// by index
+		driver.switchTo().frame(0);
+		// by id
+		driver.switchTo().frame("courses-iframe");
+		// by webelemment
+		driver.switchTo().frame(TheFrame);
+
+		String theText = driver.findElement(By.xpath("//*[@id=\"ct_text_editor-be8c5ad\"]/div/div/p")).getText();
+
+		System.out.println(theText);
+
+	}
+
+	@Test(priority = 14, description = "download the file inside the main page", enabled = false)
+	public void Download_file_to_test() {
+		
+		//WebElement TheFile = driver.findElement(By.xpath("//a[@href='http://codenboxautomationlab.com/wp-content/uploads/2022/12/APKFiles-1.zip']"));
+		//WebElement TheFile = driver.findElement(By.cssSelector(".wp-block-button__link.wp-element-button"));
+		WebElement TheFile = driver.findElement(By.xpath("//a[@class='wp-block-button__link wp-element-button']"));
+
+		TheFile.click();
+	}
+
+	@Test(priority = 15, enabled = false)
 
 	public void CheckTheTitle() {
 		String expected = "Automation Practice - CodenBox AutomationLab";
